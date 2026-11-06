@@ -1,0 +1,27 @@
+groups:
+  - name: hito13
+    rules:
+      - alert: ComponenteHTTPNoDisponible
+        expr: probe_success{job="probes"} == 0
+        for: 30s
+        labels: {severity: critical, responsible: operaciones_g09}
+        annotations:
+          summary: 'Probe HTTP fallida: {{ $labels.component }}'
+          risk: 'API o servicio de datos inaccesible por HTTP; no demuestra corrupcion.'
+          action: 'Verificar up del blackbox, logs del servicio Hito 13 y ejecutar recuperar_servicios.ps1.'
+      - alert: ErroresServidorAPI
+        expr: sum(rate(hito13_http_requests_total{job="api",status=~"5.."}[2m])) / clamp_min(sum(rate(hito13_http_requests_total{job="api"}[2m])), 0.001) > 0.05
+        for: 1m
+        labels: {severity: warning, responsible: backend_g09}
+        annotations:
+          summary: 'Mas de 5% de respuestas API 5xx durante 1 minuto'
+          risk: 'Las estadisticas pueden no estar disponibles aunque live responda.'
+          action: 'Revisar dependencia InfluxDB, tasa de errores y logs acotados; no borrar datos.'
+      - alert: ScrapeNoDisponible
+        expr: up == 0
+        for: 30s
+        labels: {severity: warning, responsible: operaciones_g09}
+        annotations:
+          summary: 'No se puede recolectar {{ $labels.job }}'
+          risk: 'Perdida de observabilidad; no equivale siempre a caida del componente.'
+          action: 'Verificar red y endpoint metrics del target, especialmente blackbox.'

@@ -1,0 +1,115 @@
+name: hito13-g09
+services:
+  influxdb:
+    image: influxdb:3.12.2-core
+    command:
+      - influxdb3
+      - --num-io-threads=2
+      - serve
+      - --node-id=hito13-g09
+      - --object-store=file
+      - --data-dir=/var/lib/influxdb3
+      - --http-bind=0.0.0.0:8181
+      - --without-auth
+      - --exec-mem-pool-size=512MB
+      - --force-snapshot-mem-size=256MB
+      - --datafusion-num-threads=2
+    ports:
+      - "127.0.0.1:18183:8181"
+    volumes:
+      - datos_hito13:/var/lib/influxdb3
+    networks: [laboratorio, acceso]
+    cpus: 2.0
+    mem_limit: 2g
+    pids_limit: 256
+    restart: "no"
+    labels:
+      edu.fixture.hito: "13"
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "2"}
+  api:
+    image: hito13-g09-api:local
+    build: .
+    environment:
+      HITO12_MODE: ${HITO12_MODE:-baseline}
+      INFLUX_URL: http://influxdb:8181
+    ports:
+      - "127.0.0.1:8013:8000"
+    networks: [laboratorio, acceso]
+    cpus: 1.0
+    mem_limit: 512m
+    pids_limit: 128
+    restart: "no"
+    labels:
+      edu.fixture.hito: "13"
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "2"}
+  prometheus:
+    image: prom/prometheus:v3.3.0
+    command: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.path=/prometheus", "--storage.tsdb.retention.time=3d", "--storage.tsdb.retention.size=256MB"]
+    ports: ["127.0.0.1:19013:9090"]
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus:ro
+      - prometheus_hito13:/prometheus
+    networks: [laboratorio, acceso]
+    cpus: 0.5
+    mem_limit: 256m
+    pids_limit: 128
+    restart: "no"
+    labels: {edu.fixture.hito: "13"}
+    logging: {driver: json-file, options: {max-size: "5m", max-file: "2"}}
+  blackbox:
+    image: prom/blackbox-exporter:v0.26.0
+    command: ["--config.file=/etc/blackbox/blackbox.yml"]
+    volumes: ["./monitoring/blackbox:/etc/blackbox:ro"]
+    networks: [laboratorio]
+    cpus: 0.2
+    mem_limit: 64m
+    pids_limit: 64
+    restart: "no"
+    labels: {edu.fixture.hito: "13"}
+    logging: {driver: json-file, options: {max-size: "5m", max-file: "2"}}
+  grafana:
+    image: grafana/grafana:11.6.0
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_AUTH_BASIC_ENABLED: "false"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+    secrets: [grafana_admin_password]
+    ports: ["127.0.0.1:13013:3000"]
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_hito13:/var/lib/grafana
+    networks: [laboratorio, acceso]
+    cpus: 0.5
+    mem_limit: 256m
+    pids_limit: 128
+    restart: "no"
+    labels: {edu.fixture.hito: "13"}
+    logging: {driver: json-file, options: {max-size: "5m", max-file: "2"}}
+networks:
+  laboratorio:
+    internal: true
+  acceso:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+volumes:
+  datos_hito13:
+    labels:
+      edu.fixture.hito: "13"
+  prometheus_hito13:
+    labels: {edu.fixture.hito: "13"}
+  grafana_hito13:
+    labels: {edu.fixture.hito: "13"}
+secrets:
+  grafana_admin_password:
+    file: ./.runtime/hito13/grafana_admin_password

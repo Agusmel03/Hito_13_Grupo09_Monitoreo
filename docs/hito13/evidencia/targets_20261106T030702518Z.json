@@ -1,0 +1,158 @@
+﻿{
+    "utc":  "2026-11-06T03:07:02.0861788Z",
+    "project":  "hito13-g09",
+    "targets":  [
+                    {
+                        "job":  "api",
+                        "instance":  "api:8000",
+                        "health":  "up",
+                        "lastScrape":  "2026-11-06T03:06:53.336219298Z",
+                        "lastError":  ""
+                    },
+                    {
+                        "job":  "blackbox",
+                        "instance":  "blackbox:9115",
+                        "health":  "up",
+                        "lastScrape":  "2026-11-06T03:06:56.523787607Z",
+                        "lastError":  ""
+                    },
+                    {
+                        "job":  "grafana",
+                        "instance":  "grafana:3000",
+                        "health":  "up",
+                        "lastScrape":  "2026-11-06T03:06:54.661702026Z",
+                        "lastError":  ""
+                    },
+                    {
+                        "job":  "probes",
+                        "instance":  "http://influxdb:8181/health",
+                        "health":  "up",
+                        "lastScrape":  "2026-11-06T03:06:53.451739913Z",
+                        "lastError":  ""
+                    },
+                    {
+                        "job":  "probes",
+                        "instance":  "http://api:8000/health/live",
+                        "health":  "up",
+                        "lastScrape":  "2026-11-06T03:06:58.575961337Z",
+                        "lastError":  ""
+                    },
+                    {
+                        "job":  "prometheus",
+                        "instance":  "prometheus:9090",
+                        "health":  "up",
+                        "lastScrape":  "2026-11-06T03:06:53.525569526Z",
+                        "lastError":  ""
+                    }
+                ],
+    "probes":  [
+                   {
+                       "metric":  {
+                                      "__name__":  "probe_success",
+                                      "component":  "api",
+                                      "instance":  "http://api:8000/health/live",
+                                      "job":  "probes"
+                                  },
+                       "value":  [
+                                     1793934422.079,
+                                     "1"
+                                 ]
+                   },
+                   {
+                       "metric":  {
+                                      "__name__":  "probe_success",
+                                      "component":  "influxdb",
+                                      "instance":  "http://influxdb:8181/health",
+                                      "job":  "probes"
+                                  },
+                       "value":  [
+                                     1793934422.079,
+                                     "1"
+                                 ]
+                   }
+               ],
+    "alerts":  [
+                   {
+                       "labels":  {
+                                      "alertname":  "ComponenteHTTPNoDisponible",
+                                      "component":  "api",
+                                      "instance":  "http://api:8000/health/live",
+                                      "job":  "probes",
+                                      "responsible":  "operaciones_g09",
+                                      "severity":  "critical"
+                                  },
+                       "annotations":  {
+                                           "action":  "Verificar up del blackbox, logs del servicio Hito 13 y ejecutar recuperar_servicios.ps1.",
+                                           "risk":  "API o servicio de datos inaccesible por HTTP; no demuestra corrupcion.",
+                                           "summary":  "Probe HTTP fallida: api"
+                                       },
+                       "state":  "firing",
+                       "activeAt":  "2026-11-06T03:05:55.572164881Z",
+                       "value":  "0e+00"
+                   }
+               ],
+    "context":  {
+                    "commit_note":  "Sin repositorio Git propio; usar SHA256",
+                    "services":  [
+                                     {
+                                         "cpu":  1,
+                                         "memory_bytes":  "536870912",
+                                         "service":  "api",
+                                         "image":  "hito13-g09-api:local"
+                                     },
+                                     {
+                                         "cpu":  0.2,
+                                         "memory_bytes":  "67108864",
+                                         "service":  "blackbox",
+                                         "image":  "prom/blackbox-exporter:v0.26.0"
+                                     },
+                                     {
+                                         "cpu":  0.5,
+                                         "memory_bytes":  "268435456",
+                                         "service":  "grafana",
+                                         "image":  "grafana/grafana:11.6.0"
+                                     },
+                                     {
+                                         "cpu":  2,
+                                         "memory_bytes":  "2147483648",
+                                         "service":  "influxdb",
+                                         "image":  "influxdb:3.12.2-core"
+                                     },
+                                     {
+                                         "cpu":  0.5,
+                                         "memory_bytes":  "268435456",
+                                         "service":  "prometheus",
+                                         "image":  "prom/prometheus:v3.3.0"
+                                     }
+                                 ],
+                    "docker_memory_bytes":  16737726464,
+                    "utc":  "2026-11-06T03:07:02.5186662Z",
+                    "source_sha256":  {
+                                          "compose.yaml":  "BAA1138BBDB128CD08D68A16CCD79CBF3E89BE91A953865469956799780C3936",
+                                          "app\\adapter.py":  "AAE65D35EE54081AD6A62E631AE3C1C8799CE900DD6B6551FEFE32095AA5FD1C",
+                                          "app\\build_info.py":  "5D9FE1EB277643DF7204FA7690544E13DCFE210A5086EF288659F1F23051D352",
+                                          "app\\main.py":  "5B3E3FD93427F1400EA57B4D032B8E9C7139B2FAEBC32CB708B439ADF81619EB",
+                                          "app\\models.py":  "029CCA2A7B939A1151509FAE93F7AF4E9544CBCF93B5EAD4918DF8DE96FA3753",
+                                          "app\\monitoring.py":  "5A2D8E01099C8382868076F3994FB736F9FF3B0A28F0E3CB8367D05FB9289F4D",
+                                          "app\\upstream_influx3.py":  "E836B83202AEC287046D731DB8BC3CB6D058185214C953375849C478257F2122",
+                                          "app\\__init__.py":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+                                          "monitoring\\blackbox\\blackbox.yml":  "5941574C151243533C5A78937B86520B00238D281C55CAE5121638DDD63C0E56",
+                                          "monitoring\\grafana\\dashboards\\hito13.json":  "7A686C5969B952C582BBDCD9EEABE6A8EA9DDA96235DB83A2F76F43DC3B3A488",
+                                          "monitoring\\grafana\\provisioning\\dashboards\\default.yml":  "F4147A434A568E7AE9643D7E177E324F6CF959532C609F36F1D39B1B4F1AC080",
+                                          "monitoring\\grafana\\provisioning\\datasources\\prometheus.yml":  "A27AD0D7F8ADBF9E1E19578A10F79FA565CB588CC9AC29F2B18951AB5C4D5C67",
+                                          "monitoring\\prometheus\\alerts.yml":  "3C1062663191608E30C9997D8A8CB6E9FBE2B8485E32AF9B20F619E94F16B7F8",
+                                          "monitoring\\prometheus\\prometheus.yml":  "5F15DEF70F74A0C987D7BCA07795EFEEA138809ACA371BF81D37BCBF088EC9AE",
+                                          "scripts\\hito13\\common.ps1":  "76C80C3CE354C1A8C3AFC05AAEDACEBEA8690C96516A88ED5EAD7F3778A1C380",
+                                          "scripts\\hito13\\detener_laboratorio.ps1":  "38E8B9C943E5D3FF01234A0E7F734555BCCEAF9C34F1C4F3622F0A2C3608D3B4",
+                                          "scripts\\hito13\\generar_trafico.ps1":  "9D679F6BEA8A97A048E3AB3A4261D31C855B28EBFE0221209C4815EEC02300C0",
+                                          "scripts\\hito13\\iniciar_monitoreo.ps1":  "84D25B4A853116C97BD946A951735F5444DDA564D0DFF5C375868651812FB17A",
+                                          "scripts\\hito13\\preparar_datos.ps1":  "56E5222A8A70C017C4ED1EA9786ADC8DCAA6FAC9A5BE7F740F925AC833ECBBC8",
+                                          "scripts\\hito13\\prueba_falla_controlada.ps1":  "6ACF273350ABF09301B93E48EEBAB623A2AD47CF039BDAC9D96AA58F08A3DC00",
+                                          "scripts\\hito13\\recuperar_servicios.ps1":  "877D58FF8D265F0E93A4921F979DB2F6C1B0258ED85031B77BA5F2DF83044D7B",
+                                          "scripts\\hito13\\verificar_targets.ps1":  "7A09C512560221931028E998AF245440DD10DAF80E2ABBB1ED7721843BD8308D"
+                                      },
+                    "docker_cpus":  16,
+                    "commit":  null,
+                    "docker_version":  "29.7.2"
+                }
+}

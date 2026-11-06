@@ -1,0 +1,369 @@
+{
+  "uid": "fixture2030-hito13",
+  "title": "Fixture 2030 ? Hito 13",
+  "schemaVersion": 40,
+  "version": 1,
+  "refresh": "10s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "tags": [
+    "hito13"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Scrape de métricas: 1=OK (no valida datos)",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-hito13"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "up",
+          "refId": "A",
+          "legendFormat": "{{job}} {{component}} {{route}} {{status}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Disponibilidad HTTP API e InfluxDB: 1=2xx",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-hito13"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "probe_success{job=\"probes\"}",
+          "refId": "A",
+          "legendFormat": "{{job}} {{component}} {{route}} {{status}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Comparación API e InfluxDB: duración de probes HTTP",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-hito13"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "probe_duration_seconds{job=\"probes\"}",
+          "refId": "A",
+          "legendFormat": "{{job}} {{component}} {{route}} {{status}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "description": "GET a health en ambos componentes; no son consultas de negocio ni verifican integridad."
+    },
+    {
+      "id": 4,
+      "title": "Latencia API p95: ventana 2 min",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-hito13"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(hito13_http_request_duration_seconds_bucket{job=\"api\"}[2m])))",
+          "refId": "A",
+          "legendFormat": "{{job}} {{component}} {{route}} {{status}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Throughput API por ruta: ventana 2 min",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-hito13"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (route) (rate(hito13_http_requests_total{job=\"api\"}[2m]))",
+          "refId": "A",
+          "legendFormat": "{{job}} {{component}} {{route}} {{status}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "Errores API 4xx y 5xx por segundo",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-hito13"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum by (status) (rate(hito13_http_errors_total{job=\"api\"}[2m]))",
+          "refId": "A",
+          "legendFormat": "{{job}} {{component}} {{route}} {{status}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "Volumen API: requests desde reinicio",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-hito13"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum(hito13_http_requests_total{job=\"api\"})",
+          "refId": "A",
+          "legendFormat": "{{job}} {{component}} {{route}} {{status}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "description": "Volumen de operaciones HTTP, no datos almacenados. Incluye probes y health; excluye metrics."
+    },
+    {
+      "id": 8,
+      "title": "API vs llamada SQL InfluxDB: medias, ventana 2 min",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-hito13"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(hito13_http_request_duration_seconds_sum{job=\"api\",route=\"/api/v1/partidos/{partido_id}/estadisticas\"}[2m])) / sum(rate(hito13_http_request_duration_seconds_count{job=\"api\",route=\"/api/v1/partidos/{partido_id}/estadisticas\"}[2m]))",
+          "refId": "A",
+          "legendFormat": "API estadisticas"
+        },
+        {
+          "expr": "sum(rate(hito13_dependency_duration_seconds_sum{job=\"api\"}[2m])) / sum(rate(hito13_dependency_duration_seconds_count{job=\"api\"}[2m]))",
+          "refId": "B",
+          "legendFormat": "Llamada SQL InfluxDB"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "description": "API incluye la llamada SQL. La dependencia incluye transporte y cliente. No mide tiempo interno puro del motor."
+    },
+    {
+      "id": 9,
+      "title": "Proporción de errores API 5xx: ventana 2 min",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus-hito13"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(hito13_http_requests_total{job=\"api\",status=~\"5..\"}[2m])) / clamp_min(sum(rate(hito13_http_requests_total{job=\"api\"}[2m])), 0.001)",
+          "refId": "A",
+          "legendFormat": "{{job}} {{component}} {{route}} {{status}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0.05
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      }
+    }
+  ]
+}
